@@ -1,4 +1,4 @@
-      const canvas = document.getElementById("gameCanvas");
+const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const scoreEl = document.getElementById("score");
 const startScreen = document.getElementById("start-screen");
@@ -123,6 +123,40 @@ function gameLoop() {
 
         // Draw Neon Pipes
         ctx.shadowBlur = 10;
-        ctx.shadow
+        ctx.shadowColor = "#00ffcc";
+        ctx.fillStyle = "#00ffcc";
+        
+        // Top pipe
+        ctx.fillRect(pipes[i].x, 0, 50, pipes[i].top);
+        // Bottom pipe
+        ctx.fillRect(pipes[i].x, pipes[i].top + PIPE_GAP, 50, canvas.height - (pipes[i].top + PIPE_GAP));
+        ctx.shadowBlur = 0; // reset
+
+        // Collision detection
+        if (
+            bird.x + bird.radius > pipes[i].x &&
+            bird.x - bird.radius < pipes[i].x + 50 &&
+            (bird.y - bird.radius < pipes[i].top || bird.y + bird.radius > pipes[i].top + PIPE_GAP)
+        ) {
+            gameOver();
+            return;
+        }
+
+        // Score tracker
+        if (!pipes[i].passed && pipes[i].x + 50 < bird.x) {
+            pipes[i].passed = true;
+            score++;
+            scoreEl.innerText = score;
+        }
+
+        // Remove offscreen pipes
+        if (pipes[i].x + 50 < 0) {
+            pipes.splice(i, 1);
+        }
+    }
+
+    gameLoopId = requestAnimationFrame(gameLoop);
+}
+
         
       
