@@ -1,4 +1,4 @@
-const canvas = document.getElementById("gameCanvas");
+      const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const scoreEl = document.getElementById("score");
 const startScreen = document.getElementById("start-screen");
@@ -59,14 +59,50 @@ function gameLoop() {
     bird.velocity += GRAVITY;
     bird.y += bird.velocity;
 
-    // Draw Neon Bird
+    // Draw Cute Cartoon Bird
+    ctx.save();
+    ctx.translate(bird.x, bird.y);
+    
+    // Bird ki rotation (velocity ke hisab se upar/niche mude)
+    let rotation = Math.min(Math.PI / 6, Math.max(-Math.PI / 12, bird.velocity * 0.05));
+    ctx.rotate(rotation);
+
+    // 1. Main Body (Pink Neon Circle)
     ctx.shadowBlur = 15;
     ctx.shadowColor = "#ff007f";
     ctx.fillStyle = "#ff007f";
     ctx.beginPath();
-    ctx.arc(bird.x, bird.y, bird.radius, 0, Math.PI * 2);
+    ctx.arc(0, 0, bird.radius, 0, Math.PI * 2);
     ctx.fill();
-    ctx.shadowBlur = 0; // reset shadow
+    ctx.shadowBlur = 0; // Shadow reset
+
+    // 2. Bird's Eye (Aankh)
+    ctx.fillStyle = "#fff";
+    ctx.beginPath();
+    ctx.arc(4, -4, 3.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#000"; // Pupil
+    ctx.beginPath();
+    ctx.arc(5, -4, 1.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 3. Bird's Beak (Chounch - Orange triangle)
+    ctx.fillStyle = "#ffaa00";
+    ctx.beginPath();
+    ctx.moveTo(bird.radius - 2, -2);
+    ctx.lineTo(bird.radius + 6, 1);
+    ctx.lineTo(bird.radius - 2, 4);
+    ctx.closePath();
+    ctx.fill();
+
+    // 4. Bird's Wing (Pankh - Chhota circle jo flap karega)
+    ctx.fillStyle = "#ff55aa";
+    ctx.beginPath();
+    let wingWave = bird.velocity < 0 ? -3 : 2; 
+    ctx.arc(-5, wingWave, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
 
     // Floor and Ceiling collision
     if (bird.y + bird.radius >= canvas.height || bird.y - bird.radius <= 0) {
@@ -87,38 +123,6 @@ function gameLoop() {
 
         // Draw Neon Pipes
         ctx.shadowBlur = 10;
-        ctx.shadowColor = "#00ffcc";
-        ctx.fillStyle = "#00ffcc";
+        ctx.shadow
         
-        // Top pipe
-        ctx.fillRect(pipes[i].x, 0, 50, pipes[i].top);
-        // Bottom pipe
-        ctx.fillRect(pipes[i].x, pipes[i].top + PIPE_GAP, 50, canvas.height - (pipes[i].top + PIPE_GAP));
-        ctx.shadowBlur = 0; // reset
-
-        // Collision detection
-        if (
-            bird.x + bird.radius > pipes[i].x &&
-            bird.x - bird.radius < pipes[i].x + 50 &&
-            (bird.y - bird.radius < pipes[i].top || bird.y + bird.radius > pipes[i].top + PIPE_GAP)
-        ) {
-            gameOver();
-            return;
-        }
-
-        // Score tracker
-        if (!pipes[i].passed && pipes[i].x + 50 < bird.x) {
-            pipes[i].passed = true;
-            score++;
-            scoreEl.innerText = score;
-        }
-
-        // Remove offscreen pipes
-        if (pipes[i].x + 50 < 0) {
-            pipes.splice(i, 1);
-        }
-    }
-
-    gameLoopId = requestAnimationFrame(gameLoop);
-      }
       
